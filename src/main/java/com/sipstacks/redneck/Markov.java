@@ -109,7 +109,7 @@ public class Markov {
 		newPhrase.add(nextWord);
 		
 		// Keep looping through the words until we've reached the end
-		while (nextWord.charAt(nextWord.length()-1) != '.') {
+		while (nextWord.length() != 0 && nextWord.charAt(nextWord.length()-1) != '.') {
 			Vector<String> wordSelection = markovChain.get(nextWord);
 			if (wordSelection == null) break;
 			int wordSelectionLen = wordSelection.size();

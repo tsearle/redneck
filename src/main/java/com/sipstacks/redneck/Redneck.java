@@ -36,8 +36,10 @@ public class Redneck
 			}
 			try{Thread.sleep(300);}catch(Exception e) {}
 		}
-		String result = Markov.generateSentence();
-		System.err.println(result);
+		for (int i = 0; i < 10; i++) {
+			String result = Markov.generateSentence();
+			System.err.println(result);
+		}
 	}
 }
 
