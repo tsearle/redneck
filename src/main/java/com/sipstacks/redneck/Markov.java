@@ -48,7 +48,7 @@ public class Markov {
 	 */
 	public static void addWords(String phrase) {
 		// put each word into an array
-		String[] words = phrase.split("[ \n]");
+		String[] words = phrase.split("[\\s]+");
 
 		if (words.length < 2) return;
 				
@@ -56,16 +56,21 @@ public class Markov {
 		// if its added, then get the suffix vector and add the word
 		// if it hasn't been added then add the word to the list
 		// if its the first or last word then select the _start / _end key
+
+		boolean start = true;
 		
 		for (int i=0; i<words.length; i++) {
+
+			if(words[i].length() == 0) continue;
 						
 			// Add the start and end words to their own
-			if (i == 0) {
+			if (start) {
+				start = false;
 				Vector<String> startWords = markovChain.get("_start");
 				startWords.add(words[i]);
 				
 				Vector<String> suffix = markovChain.get(words[i]);
-				if (suffix == null) {
+				if (suffix == null && i+1 < words.length) {
 					suffix = new Vector<String>();
 					suffix.add(words[i+1]);
 					markovChain.put(words[i], suffix);
@@ -109,7 +114,9 @@ public class Markov {
 		newPhrase.add(nextWord);
 		
 		// Keep looping through the words until we've reached the end
-		while (nextWord.length() != 0 && nextWord.charAt(nextWord.length()-1) != '.') {
+		while (nextWord.length() != 0 && nextWord.charAt(nextWord.length()-1) != '.'
+					      && nextWord.charAt(nextWord.length()-1) != '?' 
+					      && nextWord.charAt(nextWord.length()-1) != '!') {
 			Vector<String> wordSelection = markovChain.get(nextWord);
 			if (wordSelection == null) break;
 			int wordSelectionLen = wordSelection.size();

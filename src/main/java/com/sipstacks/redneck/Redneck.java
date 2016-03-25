@@ -17,7 +17,18 @@ public class Redneck
 			JSONObject defintion = (JSONObject)item;
 			Object result = defintion.get("example");
 			if(result != null) {
-				String sResult = result.toString().replaceAll("^\"(.*)\"$", "$1");
+				String sResult = result.toString().replaceAll("\"([^\"]*)\"", "$1");
+				sResult = sResult.replaceAll("\r\n", "\n");
+				sResult = sResult.replaceAll("\t", " ");
+				sResult = sResult.replaceAll("[a-zA-Z0-9]\n", ".\n");
+				sResult = sResult.replaceAll("[a-zA-Z0-9]$", ".\n");
+				sResult = sResult.replaceAll("\\[(.*)\\]", "$1");
+				sResult = sResult.replaceAll("(^|\n)([a-z0-9]+\\.)([^\n]*)(\n|$)", "$3\n");
+				sResult = sResult.replaceAll("(^|\n)([a-z0-9]+\\))([^\n]*)(\n|$)", "$3\n");
+				sResult = sResult.replaceAll("(^|\n)([a-zA-Z0-9_# -]+\\:)([^\n]*)(\n|$)", "$3\n");
+
+				//System.err.println(sResult);
+
 				results.add(sResult);
 			}
 		}
@@ -27,18 +38,20 @@ public class Redneck
 
 
 	public static void main(String args[]) {
-		for (int i = 0; i < 30; i++) {
-			List<String> results = getStrings();
-			for (String res : results) {
-				if(res != null) {
-					Markov.addWords(res);
+		while(true) {
+			for (int i = 0; i < 30; i++) {
+				List<String> results = getStrings();
+				for (String res : results) {
+					if(res != null) {
+						Markov.addWords(res);
+					}
 				}
+				try{Thread.sleep(300);}catch(Exception e) {}
 			}
-			try{Thread.sleep(300);}catch(Exception e) {}
-		}
-		for (int i = 0; i < 10; i++) {
-			String result = Markov.generateSentence();
-			System.err.println(result);
+			for (int i = 0; i < 1; i++) {
+				String result = Markov.generateSentence();
+				System.err.println(result);
+			}
 		}
 	}
 }
