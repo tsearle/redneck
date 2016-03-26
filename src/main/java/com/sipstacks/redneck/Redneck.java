@@ -11,7 +11,12 @@ public class Redneck
 {
 	public static List<String> getStrings() {
 		List<String> results = new ArrayList<String>();
-		JSONObject obj = (JSONObject)GetJson.get("http://api.urbandictionary.com/v0/random");
+		Object resobj = GetJson.get("http://api.urbandictionary.com/v0/random");
+		if (! (resobj instanceof JSONObject)) {
+			System.err.println("Unexpected response: " + resobj.toString());
+			return results;
+		}
+		JSONObject obj = (JSONObject)resobj;
 		JSONArray list = (JSONArray)obj.get("list");
 		for(Object item : list) {
 			JSONObject defintion = (JSONObject)item;
@@ -20,14 +25,22 @@ public class Redneck
 				String sResult = result.toString().replaceAll("\"([^\"]*)\"", "$1");
 				sResult = sResult.replaceAll("\r\n", "\n");
 				sResult = sResult.replaceAll("\t", " ");
-				sResult = sResult.replaceAll("[a-zA-Z0-9]\n", ".\n");
-				sResult = sResult.replaceAll("[a-zA-Z0-9]$", ".\n");
-				sResult = sResult.replaceAll("\\[(.*)\\]", "$1");
-				sResult = sResult.replaceAll("(^|\n)([a-z0-9]+\\.)([^\n]*)(\n|$)", "$3\n");
-				sResult = sResult.replaceAll("(^|\n)([a-z0-9]+\\))([^\n]*)(\n|$)", "$3\n");
-				sResult = sResult.replaceAll("(^|\n)([a-zA-Z0-9_# -]+\\:)([^\n]*)(\n|$)", "$3\n");
+//				sResult = sResult.replaceAll("[a-zA-Z0-9]\n", ".\n");
+//				sResult = sResult.replaceAll("[a-zA-Z0-9]$", ".\n");
+				sResult = sResult.replaceAll("\\[([^\\]]*)\\]", "$1");
+				sResult = sResult.replaceAll("(^|\n)([ ]*)([a-z0-9]+\\.)([^\n]*)", "$4\n");
+				sResult = sResult.replaceAll("(^|\n)([ ]*)([a-zA-Z0-9]+\\))([^\n]*)", "$4\n");
+				sResult = sResult.replaceAll("(^|\n)([ ]*)([a-zA-Z0-9_# -]+\\:)([^\n]*)", "$4\n");
+
+
+				// nuke fake bold
+				sResult = sResult.replaceAll("\\*([^\\*]*)\\*", "$1");
+				// nuke () comments just makes the chain confused
+				sResult = sResult.replaceAll("\\(([^\\)]*)\\)", "");
+
 
 				//System.err.println(sResult);
+				//System.err.println("***End of Result****");
 
 				results.add(sResult);
 			}
