@@ -22,9 +22,11 @@ public class Redneck
 			JSONObject defintion = (JSONObject)item;
 			Object result = defintion.get("example");
 			if(result != null) {
-				String sResult = result.toString().replaceAll("\"([^\"]*)\"", "$1");
-				sResult = sResult.replaceAll("\r\n", "\n");
+				String sResult = result.toString();						sResult = sResult.replaceAll("\r\n", "\n");
 				sResult = sResult.replaceAll("\t", " ");
+				sResult = sResult.replaceAll("[”“]", "\"");
+				sResult = sResult.replaceAll("\"([^\"]*)\"", "$1");
+
 //				sResult = sResult.replaceAll("[a-zA-Z0-9]\n", ".\n");
 //				sResult = sResult.replaceAll("[a-zA-Z0-9]$", ".\n");
 				sResult = sResult.replaceAll("\\[([^\\]]*)\\]", "$1");
